@@ -15,6 +15,7 @@ public class FrostAndSilence implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Hello Fabric world!");
 	}
+	//YETI
 
 	public static Identifier id(String path) {
 		return Identifier.fromNamespaceAndPath(MOD_ID, path);
