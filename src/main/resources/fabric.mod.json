@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"id": "frostandsilence",
+	"version": "${version}",
+	"name": "Frost and Silence",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/frostandsilence/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.tidal.frostandsilence.FrostAndSilence"
+		],
+		"fabric-datagen": [
+			"com.tidal.frostandsilence.FrostAndSilenceDataGenerator"
+		],
+		"client": [
+			"com.tidal.frostandsilence.FrostAndSilenceClient"
+		]
+	},
+	"mixins": [
+		"frostandsilence.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
