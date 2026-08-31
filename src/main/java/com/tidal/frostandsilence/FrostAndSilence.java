@@ -1,5 +1,6 @@
 package com.tidal.frostandsilence;
 
+import com.tidal.frostandsilence.item.ModItems;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.resources.Identifier;
@@ -13,7 +14,8 @@ public class FrostAndSilence implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Hello Fabric world!");
+		LOGGER.info("Freezing your world...");
+		ModItems.registerModItems();
 	}
 	//YETI
 
