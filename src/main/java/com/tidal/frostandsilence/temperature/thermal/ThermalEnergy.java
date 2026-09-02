@@ -9,6 +9,6 @@ public class ThermalEnergy {
     }
 
     public double getJoules() {
-        return joules;
+        return joules; // fett
     }
 }
