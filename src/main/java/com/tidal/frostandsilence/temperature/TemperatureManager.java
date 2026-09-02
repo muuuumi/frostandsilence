@@ -10,7 +10,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerPlayer;
 
 public class TemperatureManager {
-
+ // test
     private final TemperatureSimulator simulator =
             new TemperatureSimulator();
 
