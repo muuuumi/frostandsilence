@@ -1,10 +1,14 @@
 package com.tidal.frostandsilence;
 
+import com.tidal.frostandsilence.entity.ModEntities;
+import com.tidal.frostandsilence.entity.client.ModEntityModelLayers;
+import com.tidal.frostandsilence.entity.client.PenguinRenderer;
 import com.tidal.frostandsilence.network.TemperatureSyncPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.Identifier;
 
 public class FrostAndSilenceClient implements ClientModInitializer {
@@ -25,6 +29,8 @@ public class FrostAndSilenceClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        ModEntityModelLayers.registerModelLayers();
+        EntityRenderers.register(ModEntities.PENGUIN, PenguinRenderer::new);
 
         ClientPlayNetworking.registerGlobalReceiver(
                 TemperatureSyncPayload.TYPE,

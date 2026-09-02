@@ -1,5 +1,6 @@
 package com.tidal.frostandsilence;
 
+import com.tidal.frostandsilence.entity.ModEntities;
 import com.tidal.frostandsilence.item.ModItems;
 import com.tidal.frostandsilence.network.TemperatureSyncPayload;
 import com.tidal.frostandsilence.temperature.TemperatureManager;
@@ -32,7 +33,11 @@ public class FrostAndSilence implements ModInitializer {
 
 
 		ModItems.registerModItems();
-		LOGGER.info("FrostAndSilence initialized!");
+
+		ModEntities.registerModEntityTypes();
+		ModEntities.registerAttributes();
+
+		LOGGER.info("Freezing your world...");
 	}
 
 	private void tickTemperature(MinecraftServer server) {
