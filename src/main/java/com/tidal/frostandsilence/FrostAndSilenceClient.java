@@ -4,6 +4,8 @@ import com.tidal.frostandsilence.entity.ModEntities;
 import com.tidal.frostandsilence.entity.client.ModEntityModelLayers;
 import com.tidal.frostandsilence.entity.client.PenguinRenderer;
 import com.tidal.frostandsilence.network.TemperatureSyncPayload;
+import com.tidal.frostandsilence.temperature.TemperatureState;
+import com.tidal.frostandsilence.temperature.TemperatureStateCalculator;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
@@ -19,6 +21,9 @@ public class FrostAndSilenceClient implements ClientModInitializer {
                     "temperature_hud"
             );
 
+    private static final TemperatureStateCalculator STATE_CALCULATOR =
+            new TemperatureStateCalculator();
+
     private static double bodyTemperature = 37.0;
     private static double biomeTemperature = 0.0;
     private static double altitudeModifier = 0.0;
@@ -29,8 +34,12 @@ public class FrostAndSilenceClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+
         ModEntityModelLayers.registerModelLayers();
-        EntityRenderers.register(ModEntities.PENGUIN, PenguinRenderer::new);
+        EntityRenderers.register(
+                ModEntities.PENGUIN,
+                PenguinRenderer::new
+        );
 
         ClientPlayNetworking.registerGlobalReceiver(
                 TemperatureSyncPayload.TYPE,
@@ -70,11 +79,17 @@ public class FrostAndSilenceClient implements ClientModInitializer {
                         return;
                     }
 
+                    TemperatureState temperatureState =
+                            STATE_CALCULATOR.calculate(bodyTemperature);
+
                     String bodyText =
                             String.format(
                                     "Body: %.2f °C",
                                     bodyTemperature
                             );
+
+                    String stateText =
+                            "State: " + temperatureState;
 
                     String environmentText =
                             String.format(
@@ -126,7 +141,7 @@ public class FrostAndSilenceClient implements ClientModInitializer {
 
                     guiGraphics.text(
                             client.font,
-                            environmentText,
+                            stateText,
                             x,
                             y + lineHeight,
                             0xFFFFFFFF
@@ -134,7 +149,7 @@ public class FrostAndSilenceClient implements ClientModInitializer {
 
                     guiGraphics.text(
                             client.font,
-                            biomeText,
+                            environmentText,
                             x,
                             y + lineHeight * 2,
                             0xFFFFFFFF
@@ -142,7 +157,7 @@ public class FrostAndSilenceClient implements ClientModInitializer {
 
                     guiGraphics.text(
                             client.font,
-                            altitudeText,
+                            biomeText,
                             x,
                             y + lineHeight * 3,
                             0xFFFFFFFF
@@ -150,7 +165,7 @@ public class FrostAndSilenceClient implements ClientModInitializer {
 
                     guiGraphics.text(
                             client.font,
-                            timeText,
+                            altitudeText,
                             x,
                             y + lineHeight * 4,
                             0xFFFFFFFF
@@ -158,7 +173,7 @@ public class FrostAndSilenceClient implements ClientModInitializer {
 
                     guiGraphics.text(
                             client.font,
-                            weatherText,
+                            timeText,
                             x,
                             y + lineHeight * 5,
                             0xFFFFFFFF
@@ -166,9 +181,17 @@ public class FrostAndSilenceClient implements ClientModInitializer {
 
                     guiGraphics.text(
                             client.font,
-                            waterText,
+                            weatherText,
                             x,
                             y + lineHeight * 6,
+                            0xFFFFFFFF
+                    );
+
+                    guiGraphics.text(
+                            client.font,
+                            waterText,
+                            x,
+                            y + lineHeight * 7,
                             0xFFFFFFFF
                     );
                 }

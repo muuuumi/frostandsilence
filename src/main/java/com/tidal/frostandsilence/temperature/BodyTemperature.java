@@ -7,6 +7,14 @@ public class BodyTemperature {
     private double temperature;
     private final ThermalProperties thermalProperties;
 
+    private final TemperatureStateCalculator stateCalculator =
+            new TemperatureStateCalculator();
+
+    public TemperatureState getState() {
+
+        return stateCalculator.calculate(temperature);
+    }
+
     public BodyTemperature(
             double temperature,
             ThermalProperties thermalProperties) {
