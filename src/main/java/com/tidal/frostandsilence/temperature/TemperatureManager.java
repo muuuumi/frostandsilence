@@ -1,62 +1,38 @@
 package com.tidal.frostandsilence.temperature;
 
-import com.tidal.frostandsilence.network.TemperatureSyncPayload;
-import com.tidal.frostandsilence.temperature.environment.EnvironmentalTemperatureCalculator;
-import com.tidal.frostandsilence.temperature.environment.EnvironmentalTemperatureData;
-import com.tidal.frostandsilence.temperature.thermal.ThermalEnergy;
-import com.tidal.frostandsilence.temperature.thermal.ThermalEnvironment;
-import com.tidal.frostandsilence.temperature.thermal.ThermalInteraction;
+import com.tidal.frostandsilence.temperature.config.TemperatureConfig;
+import com.tidal.frostandsilence.temperature.data.TemperatureData;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerPlayer;
 
-public class TemperatureManager {
- // test
-    private final TemperatureSimulator simulator =
-            new TemperatureSimulator();
+public final class TemperatureManager {
 
-    private final EnvironmentalTemperatureCalculator
-            environmentCalculator =
-            new EnvironmentalTemperatureCalculator();
+    private TemperatureManager() {
+    }
 
-    public void tick(ServerPlayer player) {
+    public static void tick(ServerPlayer player) {
 
-        BodyTemperature body =
-                ((TemperatureHolder) player)
-                        .getBodyTemperature();
+        TemperatureData data = player.getAttachedOrCreate(TemperatureAttachments.TEMPERATURE);
 
-        EnvironmentalTemperatureData environmentData =
-                environmentCalculator.calculate(player);
+        double bodyTemperature = data.temperature();
+        double environmentTemperature = TemperatureEnvironment.getTemperature(player);
+        double difference = environmentTemperature - bodyTemperature;
 
-        ThermalEnvironment environment =
-                new ThermalEnvironment(
-                        environmentData.totalTemperature()
-                );
+        double newTemperature = bodyTemperature + difference * TemperatureConfig.VALUES.changeSpeed;
+        newTemperature = Math.clamp(newTemperature, -1.0, 1.0);
 
-        ThermalInteraction interaction =
-                new ThermalInteraction(243.0);
+        TemperatureData newData = data.withTemperature(newTemperature);
 
-        ThermalEnergy externalEnergy =
-                new ThermalEnergy(0.0);
+        player.setAttached(TemperatureAttachments.TEMPERATURE, newData);
 
-        simulator.simulateStep(
-                body,
-                environment,
-                interaction,
-                0.05,
-                externalEnergy
-        );
+        ServerPlayNetworking.send(player, new TemperatureStatePayload(newData.getState()));
+    }
 
-        ServerPlayNetworking.send(
-                player,
-                new TemperatureSyncPayload(
-                        body.getTemperature(),
-                        environmentData.biomeTemperature(),
-                        environmentData.altitudeModifier(),
-                        environmentData.timeModifier(),
-                        environmentData.weatherModifier(),
-                        environmentData.waterModifier(),
-                        environmentData.totalTemperature()
-                )
-        );
+    public static double getTemperature(ServerPlayer player) {
+        return player.getAttachedOrCreate(TemperatureAttachments.TEMPERATURE).temperature();
+    }
+
+    public static TemperatureState getState(ServerPlayer player) {
+        return player.getAttachedOrCreate(TemperatureAttachments.TEMPERATURE).getState();
     }
 }
