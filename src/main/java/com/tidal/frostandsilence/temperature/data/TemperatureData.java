@@ -8,6 +8,9 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
+/**
+ * @param temperature body temperature, clamped to [-1, 1]
+ */
 public record TemperatureData(double temperature) {
 
     public static final double DEFAULT_TEMPERATURE = 0.0;
