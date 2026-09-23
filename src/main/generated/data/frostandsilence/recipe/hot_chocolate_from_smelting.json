@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "category": "food",
+  "experience": 0.1,
+  "ingredient": "frostandsilence:chocolate",
+  "result": {
+    "id": "frostandsilence:hot_chocolate"
+  }
+}

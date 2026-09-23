@@ -7,7 +7,15 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
+/**
+ * All tunable values for the temperature system, loaded from and saved to
+ * {@code config/frostandsilence-temperature.json}. Edit that file to rebalance
+ * the system without recompiling; missing/new fields are filled with defaults
+ * and written back automatically.
+ */
 public final class TemperatureConfig {
 
     private TemperatureConfig() {
@@ -40,6 +48,9 @@ public final class TemperatureConfig {
         }
     }
 
+    /**
+     * Plain data holder. Field order matches the generated JSON.
+     */
     public static final class Values {
 
         // --- Body temperature simulation ---
@@ -83,5 +94,53 @@ public final class TemperatureConfig {
         public float freezingDamage = 2.0f;
         public int scorchingDamageIntervalTicks = 40;
         public float scorchingDamage = 2.0f;
+
+        // --- Desert extremes (TemperatureEnvironment) ---
+        // Extra heat/cold applied on top of the normal biome/day-night swing while
+        // standing in a desert biome, scaled by how close it is to noon/midnight.
+        public boolean desertExtremesEnabled = true;
+        public double desertNoonHeatBonus = 0.30;
+        public double desertNightColdBonus = 0.25;
+        // Half-width (in ticks) of the window around noon (6000) / midnight (18000)
+        // over which the bonus fades in and out.
+        public int desertExtremeWindowTicks = 3000;
+
+        // --- Food warmth (TemperatureFood) ---
+        // Item id -> temperature delta applied when the food is eaten. Positive
+        // warms the player, negative cools them. Add your own item ids here (including
+        // custom modded foods) to extend this without touching code.
+        public Map<String, Double> foodWarmth = defaultFoodWarmth();
+        private static Map<String, Double> defaultFoodWarmth() {
+            Map<String, Double> map = new LinkedHashMap<>();
+            // Warming (cooked / hearty meals)
+            map.put("minecraft:cooked_beef", 0.05);
+            map.put("minecraft:cooked_porkchop", 0.05);
+            map.put("minecraft:cooked_mutton", 0.05);
+            map.put("minecraft:cooked_chicken", 0.05);
+            map.put("minecraft:cooked_rabbit", 0.05);
+            map.put("minecraft:cooked_salmon", 0.05);
+            map.put("minecraft:baked_potato", 0.04);
+            map.put("minecraft:mushroom_stew", 0.02);
+            map.put("minecraft:rabbit_stew", 0.3);
+            map.put("minecraft:beetroot_soup", 0.02);
+            map.put("minecraft:pumpkin_pie", 0.01);
+            // Cooling (fresh / raw / fruity foods)
+            map.put("minecraft:melon_slice", -0.10);
+            map.put("minecraft:apple", -0.05);
+            map.put("minecraft:sweet_berries", -0.05);
+            map.put("minecraft:glow_berries", -0.05);
+            map.put("minecraft:chorus_fruit", -0.04);
+            map.put("minecraft:golden_carrot", -0.06);
+            map.put("minecraft:cookie", -0.03);
+            return map;
+        }
+
+        // --- Feedback & juice (TemperatureEffects / client) ---
+        public boolean soundCuesEnabled = true;
+        public boolean particlesEnabled = true;
+        public boolean vignetteEnabled = true;
+        public boolean hudPulseEnabled = true;
+        // How often (in ticks) ambient particles (breath fog / heat shimmer) spawn.
+        public int particleIntervalTicks = 30;
     }
 }

@@ -3,7 +3,8 @@
 	"package": "com.tidal.frostandsilence.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
-		"ExampleMixin"
+		"ExampleMixin",
+		"LivingEntityEatMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
